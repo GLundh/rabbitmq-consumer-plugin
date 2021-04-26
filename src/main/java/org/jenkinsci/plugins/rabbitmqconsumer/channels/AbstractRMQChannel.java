@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.rabbitmqconsumer.channels;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.TimeoutException;
 
 import org.jenkinsci.plugins.rabbitmqconsumer.RMQState;
 import org.jenkinsci.plugins.rabbitmqconsumer.events.RMQChannelEvent;
@@ -79,13 +80,13 @@ public abstract class AbstractRMQChannel implements RMQChannelNotifier, Shutdown
      *
      * @throws IOException throws if something error.
      */
-    public void close() throws IOException {
+    public void close() throws IOException, TimeoutException {
         if (state == RMQState.CONNECTED) {
             if (channel != null) {
                 try {
                     state = RMQState.CLOSE_PENDING;
                     channel.close();
-                } catch (IOException ex) {
+                } catch (IOException | TimeoutException ex) {
                     LOGGER.warn("Failed to close channel.");
                     if (!(ex.getCause() instanceof ShutdownSignalException)) {
                         state = RMQState.DISCONNECTED;
