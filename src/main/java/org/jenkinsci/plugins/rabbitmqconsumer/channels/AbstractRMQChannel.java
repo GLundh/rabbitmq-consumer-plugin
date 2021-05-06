@@ -75,10 +75,12 @@ public abstract class AbstractRMQChannel implements RMQChannelNotifier, Shutdown
         return channel;
     }
 
+
     /**
      * Close channel.
-     *
-     * @throws IOException throws if something error.
+     * 
+     * @throws IOException
+     * @throws TimeoutException
      */
     public void close() throws IOException, TimeoutException {
         if (state == RMQState.CONNECTED) {
